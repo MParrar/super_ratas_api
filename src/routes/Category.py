@@ -1,30 +1,29 @@
-import json
 from flask import Blueprint, jsonify, request
 
 # Entities
-from models.entities.Status import Status
+from models.entities.Category import Category
 # Models
-from models.StatusModel import StatusModel
+from models.CategoryModel import CategoryModel
 
 
-main = Blueprint('status_blueprint', __name__)
+main = Blueprint('category_blueprint', __name__)
 
 
 @main.route('/')
-def get_all_status():
+def get_categories():
     try:
-        all_status = StatusModel.get_all_status()
-        return jsonify(all_status)
+        categories = CategoryModel.get_categories()
+        return jsonify(categories)
     except Exception as ex:
         return jsonify({'msj': str(ex)}), 500
 
 
 @main.route('/<id>')
-def get_status(id):
+def get_category(id):
     try:
-        status = StatusModel.get_status(id)
-        if status != None:
-            return jsonify(status)
+        category = CategoryModel.get_category(id)
+        if category != None:
+            return jsonify(category)
         else:
             return jsonify({}), 404
 
@@ -33,11 +32,11 @@ def get_status(id):
 
 
 @main.route('/add', methods=['POST'])
-def add_status():
+def add_category():
     try:
         name = request.json['name']
-        status = Status(None, name)
-        affected_rows = StatusModel.add_status(status)
+        category = Category(None, name)
+        affected_rows = CategoryModel.add_category(category)
         if affected_rows == 1:
             return jsonify({"status": True})
         else:
@@ -47,31 +46,30 @@ def add_status():
 
 
 @main.route('/delete/<id>', methods=['DELETE'])
-def delete_status(id):
+def delete_category(id):
     try:
-        status = Status(id)
-        print(id)
-        affected_rows = StatusModel.delete_status(id)
+        category = Category(id)
+        affected_rows = CategoryModel.delete_category(id)
 
         if affected_rows == 1:
-            return jsonify(status.id)
+            return jsonify(category.id)
         else:
-            return jsonify({'message': "No Status deleted"}), 404
+            return jsonify({'message': "No Category deleted"}), 404
 
     except Exception as ex:
         return jsonify({'message': str(ex)}), 500
 
 
 @main.route('/update/<id>', methods=['PUT'])
-def update_status(id):
+def update_category(id):
     try:
         name = request.json['name']
-        status = Status(id, name)
+        category = Category(id, name)
 
-        affected_rows = StatusModel.update_status(status)
+        affected_rows = CategoryModel.update_category(category)
 
         if affected_rows == 1:
-            return jsonify(status.id)
+            return jsonify(category.id)
         else:
             return jsonify({'message': "Error on insert"}), 500
 
