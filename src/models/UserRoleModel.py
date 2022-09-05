@@ -1,5 +1,4 @@
 from database.db import get_connection
-from .entities.Role import Role
 from .entities.UserRole import UserRole
 
 
