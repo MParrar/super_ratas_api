@@ -13,8 +13,6 @@ main = Blueprint('user_role_blueprint', __name__)
 
 @main.route('/')
 def get_user_roles():
-    print('Este no es')
-
     try:
         user_roles = UserRoleModel.get_user_roles()
         return jsonify(user_roles)
@@ -22,13 +20,13 @@ def get_user_roles():
         return jsonify({'msj': str(ex)}), 500
 
 
-@main.route('/login')
+@main.route('/login', methods=['POST'])
 def get_user_role():
-
     try:
         email = request.json['email']
         password = request.json['password']
-
+        print(email)
+        print(password)
         user = UserRole(None, None, None, email, None,
                         None, None, password, None)
         role = UserRoleModel.get_user_role(user)

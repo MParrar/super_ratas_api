@@ -49,6 +49,8 @@ class StatusModel():
             with connection.cursor() as cursor:
                 cursor.execute("(SELECT MAX(id)+1 FROM status)")
                 id = cursor.fetchone()
+                if id == (None,):
+                    id = 1
                 cursor.execute("""INSERT INTO status (id, name) 
                                 VALUES (%s, %s)""", (id, status.name))
                 affected_rows = cursor.rowcount

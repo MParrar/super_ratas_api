@@ -3,7 +3,8 @@ from utils.DateFormat import DateFormat
 
 class Card():
     def __init__(self, id, price=None, observation=None, points=None, user_id=None, category_id=None,
-                 status_id=None, created_date=None, updated_date=None, name_category=None, name_status=None, name_user=None, surname_user=None) -> None:
+                 status_id=None, created_date=None, updated_date=None, name_category=None, name_status=None, name_user=None, surname_user=None,
+                 phone_number=None, email=None, address=None) -> None:
         self.id = id
         self.price = price
         self.observation = observation
@@ -17,6 +18,9 @@ class Card():
         self.name_status = name_status
         self.name_user = name_user
         self.surname_user = surname_user
+        self.phone_number = phone_number
+        self.email = email
+        self.address = address
 
     def to_JSON(self):
         return {
@@ -32,6 +36,9 @@ class Card():
             'name_category': self.name_category,
             'name_status': self.name_status,
             'name_user': self.name_user,
-            'surname_user': self.surname_user
+            'surname_user': self.surname_user,
+            'phone_number': self.phone_number,
+            'email': self.email,
+            'address': self.address,
 
         }
