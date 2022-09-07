@@ -48,6 +48,8 @@ class RoleModel():
             with connection.cursor() as cursor:
                 cursor.execute("(SELECT MAX(id)+1 FROM role)")
                 id = cursor.fetchone()
+                if id == (None,):
+                    id = 1
                 cursor.execute("""INSERT INTO role (id, name) 
                                 VALUES (%s, %s)""", (id, role.name))
                 affected_rows = cursor.rowcount

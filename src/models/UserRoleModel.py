@@ -58,6 +58,8 @@ class UserRoleModel():
             with connection.cursor() as cursor:
                 cursor.execute("(SELECT MAX(id)+1 FROM public.user)")
                 id = cursor.fetchone()
+                if id == (None,):
+                    id = 1
                 cursor.execute("""INSERT INTO public.user (id, name,surname,email,phone_number,
                 role_id,address,password) VALUES (%s, %s,%s,%s,%s,%s,%s,%s)""", (id, user.name, user.surname, user.email, user.phone_number, user.role_id, user.address, user.password))
                 affected_rows = cursor.rowcount

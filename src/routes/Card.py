@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from models.entities.Buyer import Buyer
 
 # Entities
 from models.entities.Card import Card
@@ -28,7 +29,7 @@ def add_card():
         category_id = request.json['category_id']
         status_id = request.json['status_id']
         created_date = request.json['created_date']
-
+        print(user_id)
         card = Card(None, price, observation, points, user_id, category_id,
                     status_id, created_date,)
         affected_rows = CardModel.add_card(card)
@@ -78,3 +79,50 @@ def update_category(id):
 
     except Exception as ex:
         return jsonify({'message': str(ex)}), 500
+
+
+@main.route('/buy', methods=['POST'])
+def add_status():
+    try:
+        user_id = request.json['user_id']
+        card_id = request.json['card_id']
+        print(user_id)
+        print(card_id)
+        buyer = Buyer(None, user_id, card_id)
+        affected_rows = CardModel.add_buyer(buyer)
+        if affected_rows == 1:
+            return jsonify({"status": True})
+        else:
+            return jsonify({'message': "Error on insert"}), 500
+    except Exception as ex:
+        return jsonify({'message': str(ex)}), 500
+
+
+@main.route('/filter-category/<category>')
+def get_cards_by_category(category):
+    try:
+        cards = CardModel.get_cards_by_category(category)
+        return jsonify(cards)
+    except Exception as ex:
+        return jsonify({'msj': str(ex)}), 500
+
+
+@main.route('/buyer', methods=['POST'])
+def get_buyers():
+    try:
+        card_id = request.json['card_id']
+        buyer = Buyer(None, None, card_id)
+
+        buyers = CardModel.get_buyer(buyer)
+        return jsonify(buyers)
+    except Exception as ex:
+        return jsonify({'msj': str(ex)}), 500
+
+
+@main.route('/filter-status/<status>')
+def get_cards_by_status(status):
+    try:
+        cards = CardModel.get_cards_by_status(status)
+        return jsonify(cards)
+    except Exception as ex:
+        return jsonify({'msj': str(ex)}), 500
