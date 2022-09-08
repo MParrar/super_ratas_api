@@ -1,58 +1,57 @@
 from database.db import get_connection
-from .entities.Status import Status
+from .entities.Role import Role
 
 
-class StatusModel():
+class RoleModel():
 
     @classmethod
-    def get_all_status(self):
+    def get_roles(self):
         try:
             connection = get_connection()
-            all_status = []
+            roles = []
 
             with connection.cursor() as cursor:
-                cursor.execute('SELECT id, name FROM status')
+                cursor.execute('SELECT id, name FROM role')
                 resulset = cursor.fetchall()
 
                 for row in resulset:
-                    status = Status(row[0], row[1])
-                    all_status.append(status.to_JSON())
+                    role = Role(row[0], row[1])
+                    roles.append(role.to_JSON())
             connection.close()
-            return all_status
+            return roles
         except Exception as ex:
             raise Exception(ex)
 
     @classmethod
-    def get_status(self, id):
+    def get_role(self, id):
         try:
             connection = get_connection()
 
             with connection.cursor() as cursor:
                 cursor.execute(
-                    "SELECT id, name FROM status WHERE id = %s", (id,))
+                    "SELECT id, name FROM role WHERE id = %s", (id,))
                 row = cursor.fetchone()
 
-                status = None
+                role = None
                 if row != None:
-                    status = Status(row[0], row[1])
-                    status = status.to_JSON()
+                    role = Role(row[0], row[1])
+                    role = role.to_JSON()
             connection.close()
-            return status
+            return role
         except Exception as ex:
             raise Exception(ex)
 
     @classmethod
-    def add_status(self, status):
+    def add_role(self, role):
         try:
             connection = get_connection()
-
             with connection.cursor() as cursor:
-                cursor.execute("(SELECT MAX(id)+1 FROM status)")
+                cursor.execute("(SELECT MAX(id)+1 FROM role)")
                 id = cursor.fetchone()
                 if id == (None,):
                     id = 1
-                cursor.execute("""INSERT INTO status (id, name) 
-                                VALUES (%s, %s)""", (id, status.name))
+                cursor.execute("""INSERT INTO role (id, name) 
+                                VALUES (%s, %s)""", (id, role.name))
                 affected_rows = cursor.rowcount
                 connection.commit()
 
@@ -62,11 +61,12 @@ class StatusModel():
             raise Exception(ex)
 
     @classmethod
-    def delete_status(self, status):
+    def delete_role(self, role):
         try:
             connection = get_connection()
             with connection.cursor() as cursor:
-                cursor.execute("DELETE FROM status WHERE id = %s", (status,))
+                cursor.execute(
+                    "DELETE FROM role WHERE id = %s", (role,))
                 affected_rows = cursor.rowcount
                 connection.commit()
 
@@ -76,13 +76,13 @@ class StatusModel():
             raise Exception(ex)
 
     @classmethod
-    def update_status(self, status):
+    def update_role(self, role):
         try:
             connection = get_connection()
 
             with connection.cursor() as cursor:
-                cursor.execute("""UPDATE status SET name = %s 
-                                WHERE id = %s """, (status.name, status.id))
+                cursor.execute("""UPDATE role SET name = %s 
+                                WHERE id = %s """, (role.name, role.id))
                 affected_rows = cursor.rowcount
                 connection.commit()
 

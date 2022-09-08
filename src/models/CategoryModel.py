@@ -1,58 +1,57 @@
 from database.db import get_connection
-from .entities.Status import Status
+from .entities.Category import Category
 
 
-class StatusModel():
+class CategoryModel():
 
     @classmethod
-    def get_all_status(self):
+    def get_categories(self):
         try:
             connection = get_connection()
-            all_status = []
+            categories = []
 
             with connection.cursor() as cursor:
-                cursor.execute('SELECT id, name FROM status')
+                cursor.execute('SELECT id, name FROM category')
                 resulset = cursor.fetchall()
 
                 for row in resulset:
-                    status = Status(row[0], row[1])
-                    all_status.append(status.to_JSON())
+                    category = Category(row[0], row[1])
+                    categories.append(category.to_JSON())
             connection.close()
-            return all_status
+            return categories
         except Exception as ex:
             raise Exception(ex)
 
     @classmethod
-    def get_status(self, id):
+    def get_category(self, id):
         try:
             connection = get_connection()
 
             with connection.cursor() as cursor:
                 cursor.execute(
-                    "SELECT id, name FROM status WHERE id = %s", (id,))
+                    "SELECT id, name FROM category WHERE id = %s", (id,))
                 row = cursor.fetchone()
 
-                status = None
+                category = None
                 if row != None:
-                    status = Status(row[0], row[1])
-                    status = status.to_JSON()
+                    category = Category(row[0], row[1])
+                    category = category.to_JSON()
             connection.close()
-            return status
+            return category
         except Exception as ex:
             raise Exception(ex)
 
     @classmethod
-    def add_status(self, status):
+    def add_category(self, category):
         try:
             connection = get_connection()
-
             with connection.cursor() as cursor:
-                cursor.execute("(SELECT MAX(id)+1 FROM status)")
+                cursor.execute("(SELECT MAX(id)+1 FROM category)")
                 id = cursor.fetchone()
                 if id == (None,):
                     id = 1
-                cursor.execute("""INSERT INTO status (id, name) 
-                                VALUES (%s, %s)""", (id, status.name))
+                cursor.execute("""INSERT INTO category (id, name) 
+                                VALUES (%s, %s)""", (id, category.name))
                 affected_rows = cursor.rowcount
                 connection.commit()
 
@@ -62,11 +61,12 @@ class StatusModel():
             raise Exception(ex)
 
     @classmethod
-    def delete_status(self, status):
+    def delete_category(self, category):
         try:
             connection = get_connection()
             with connection.cursor() as cursor:
-                cursor.execute("DELETE FROM status WHERE id = %s", (status,))
+                cursor.execute(
+                    "DELETE FROM category WHERE id = %s", (category,))
                 affected_rows = cursor.rowcount
                 connection.commit()
 
@@ -76,13 +76,13 @@ class StatusModel():
             raise Exception(ex)
 
     @classmethod
-    def update_status(self, status):
+    def update_category(self, category):
         try:
             connection = get_connection()
 
             with connection.cursor() as cursor:
-                cursor.execute("""UPDATE status SET name = %s 
-                                WHERE id = %s """, (status.name, status.id))
+                cursor.execute("""UPDATE category SET name = %s 
+                                WHERE id = %s """, (category.name, category.id))
                 affected_rows = cursor.rowcount
                 connection.commit()
 

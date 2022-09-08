@@ -1,30 +1,29 @@
-import json
 from flask import Blueprint, jsonify, request
 
 # Entities
-from models.entities.Status import Status
+from models.entities.Role import Role
 # Models
-from models.StatusModel import StatusModel
+from models.RoleModel import RoleModel
 
 
-main = Blueprint('status_blueprint', __name__)
+main = Blueprint('role_blueprint', __name__)
 
 
 @main.route('/')
-def get_all_status():
+def get_roles():
     try:
-        all_status = StatusModel.get_all_status()
-        return jsonify(all_status)
+        roles = RoleModel.get_roles()
+        return jsonify(roles)
     except Exception as ex:
         return jsonify({'msj': str(ex)}), 500
 
 
 @main.route('/<id>')
-def get_status(id):
+def get_role(id):
     try:
-        status = StatusModel.get_status(id)
-        if status != None:
-            return jsonify(status)
+        role = RoleModel.get_role(id)
+        if role != None:
+            return jsonify(role)
         else:
             return jsonify({}), 404
 
@@ -33,11 +32,11 @@ def get_status(id):
 
 
 @main.route('/add', methods=['POST'])
-def add_status():
+def add_role():
     try:
         name = request.json['name']
-        status = Status(None, name)
-        affected_rows = StatusModel.add_status(status)
+        role = Role(None, name)
+        affected_rows = RoleModel.add_role(role)
         if affected_rows == 1:
             return jsonify({"status": True})
         else:
@@ -47,14 +46,13 @@ def add_status():
 
 
 @main.route('/delete/<id>', methods=['DELETE'])
-def delete_status(id):
+def delete_role(id):
     try:
-        status = Status(id)
-        print(id)
-        affected_rows = StatusModel.delete_status(id)
+        role = Role(id)
+        affected_rows = RoleModel.delete_role(id)
 
         if affected_rows == 1:
-            return jsonify(status.id)
+            return jsonify(role.id)
         else:
             return jsonify({'message': "No Status deleted"}), 404
 
@@ -63,15 +61,15 @@ def delete_status(id):
 
 
 @main.route('/update/<id>', methods=['PUT'])
-def update_status(id):
+def update_role(id):
     try:
         name = request.json['name']
-        status = Status(id, name)
+        role = Role(id, name)
 
-        affected_rows = StatusModel.update_status(status)
+        affected_rows = RoleModel.update_role(role)
 
         if affected_rows == 1:
-            return jsonify(status.id)
+            return jsonify(role.id)
         else:
             return jsonify({'message': "Error on insert"}), 500
 
