@@ -31,11 +31,11 @@ def get_user_role():
                         None, None, password, None)
         role = UserRoleModel.get_user_role(user)
         if role == -1:
-            return jsonify({'message': 'clave o usuario incorrecto'}), 500
+            return jsonify({'message': 'Invalid login or password. Please try again.'}), 500
         if role != None:
             return jsonify(role)
         else:
-            return jsonify({'message': 'usuario no existe'}), 404
+            return jsonify({'message': 'user does not exist'}), 404
 
     except Exception as ex:
         return jsonify({'message': str(ex)}), 500
@@ -50,7 +50,7 @@ def add_user_role():
         phone_number = request.json['phone_number']
         role_id = request.json['role_id']
         address = request.json['address']
-        password = request.json['password']
+        password = '123456'
 
         user = UserRole(None, name, surname, email,
                         phone_number, role_id, address, password)
