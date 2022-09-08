@@ -5,6 +5,7 @@ from models.entities.Buyer import Buyer
 from models.entities.Card import Card
 # Models
 from models.CardModel import CardModel
+from models.entities.Filter import Filter
 
 
 main = Blueprint('card_blueprint', __name__)
@@ -123,6 +124,19 @@ def get_buyers():
 def get_cards_by_status(status):
     try:
         cards = CardModel.get_cards_by_status(status)
+        return jsonify(cards)
+    except Exception as ex:
+        return jsonify({'msj': str(ex)}), 500
+
+
+@main.route('/filter-category-status', methods=['POST'])
+def get_cards_by_status_and_category():
+    try:
+        status_id = request.json['status_id']
+        category_id = request.json['category_id']
+
+        filter = Filter(status_id, category_id)
+        cards = CardModel.get_cards_by_status_and_category(filter)
         return jsonify(cards)
     except Exception as ex:
         return jsonify({'msj': str(ex)}), 500

@@ -1,3 +1,4 @@
+from unicodedata import category
 from database.db import get_connection
 from models.entities.Buyer import Buyer
 from models.entities.Card import Card
@@ -169,6 +170,57 @@ class CardModel():
                 WHERE status_id = (%s)
                 ORDER BY public.card.created_date DESC
                 """, (status,))
+                resulset = cursor.fetchall()
+
+                for row in resulset:
+                    card = Card(row[0], row[1], row[2],
+                                row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15])
+                    cards.append(card.to_JSON())
+            connection.close()
+            return cards
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def get_cards_by_status_and_category(self, filter):
+        try:
+            connection = get_connection()
+            cards = []
+            with connection.cursor() as cursor:
+                if (filter.category_id != None and filter.status_id != None):
+                    print('los 2')
+                    cursor.execute("""SELECT public.card.id, price,observation,points,user_id,category_id,status_id,
+                created_date, updated_date,public.category.name,public.status.name,public.user.name,public.user.surname,
+                public.user.phone_number,public.user.email, public.user.address
+                FROM public.card JOIN public."user" ON "user".id = "card".user_id
+                JOIN public.category ON category.id = card.category_id
+                JOIN public.status ON status.id = card.status_id
+                WHERE status_id = (%s) AND category_id = (%s)
+                ORDER BY public.card.created_date DESC
+                """, (filter.status_id, filter.category_id,))
+                elif filter.category_id != None:
+                    print('category')
+                    cursor.execute("""SELECT public.card.id, price,observation,points,user_id,category_id,status_id,
+                created_date, updated_date,public.category.name,public.status.name,public.user.name,public.user.surname,
+                public.user.phone_number,public.user.email, public.user.address
+                FROM public.card JOIN public."user" ON "user".id = "card".user_id
+                JOIN public.category ON category.id = card.category_id
+                JOIN public.status ON status.id = card.status_id
+                WHERE category_id = (%s)
+                ORDER BY public.card.created_date DESC
+                """, (filter.category_id,))
+                else:
+                    print('status')
+                    cursor.execute("""SELECT public.card.id, price,observation,points,user_id,category_id,status_id,
+                created_date, updated_date,public.category.name,public.status.name,public.user.name,public.user.surname,
+                public.user.phone_number,public.user.email, public.user.address
+                FROM public.card JOIN public."user" ON "user".id = "card".user_id
+                JOIN public.category ON category.id = card.category_id
+                JOIN public.status ON status.id = card.status_id
+                WHERE card.status_id = (%s)
+                ORDER BY public.card.created_date DESC
+                """, (filter.status_id,))
+
                 resulset = cursor.fetchall()
 
                 for row in resulset:
